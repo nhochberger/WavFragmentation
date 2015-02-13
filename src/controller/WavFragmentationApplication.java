@@ -2,6 +2,7 @@ package controller;
 
 import hochberger.utilities.application.ApplicationProperties;
 import hochberger.utilities.application.BasicLoggedApplication;
+import view.WavFragmentationGui;
 
 public class WavFragmentationApplication extends BasicLoggedApplication {
 
@@ -27,7 +28,8 @@ public class WavFragmentationApplication extends BasicLoggedApplication {
 	@Override
 	public void start() {
 		super.start();
-
+		WavFragmentationGui gui = new WavFragmentationGui(this.properties);
+		gui.activate();
 	}
 
 	@Override
