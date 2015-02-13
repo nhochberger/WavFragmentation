@@ -1,5 +1,7 @@
 package view;
 
+import hochberger.utilities.eventbus.EventBus;
+import hochberger.utilities.eventbus.EventReceiver;
 import hochberger.utilities.gui.EDTSafeFrame;
 import hochberger.utilities.gui.StretchingBackgroundedPanel;
 import hochberger.utilities.gui.input.SelfHighlightningValidatingTextField;
@@ -7,16 +9,24 @@ import hochberger.utilities.gui.input.validator.IntegerStringInputValidator;
 import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
 import hochberger.utilities.images.loader.ImageLoader;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import model.MessageDisplayEvent;
 import net.miginfocom.swing.MigLayout;
 
-public class WavFragmentationMainFrame extends EDTSafeFrame {
+public class WavFragmentationMainFrame extends EDTSafeFrame implements EventReceiver<MessageDisplayEvent> {
 
-	public WavFragmentationMainFrame(final String title) {
+	private JLabel messageLabel;
+	private final EventBus eventBus;
+
+	public WavFragmentationMainFrame(final String title, final EventBus eventBus) {
 		super(title);
+		this.eventBus = eventBus;
 	}
 
 	@Override
@@ -42,11 +52,30 @@ public class WavFragmentationMainFrame extends EDTSafeFrame {
 		add(folderChooserbutton, "wrap");
 
 		JButton beginFragmentationButton = new JButton("frag");
+		beginFragmentationButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent arg0) {
+				WavFragmentationMainFrame.this.eventBus.publishFromEDT(new MessageDisplayEvent("begin frag"));
+			}
+		});
 		add(beginFragmentationButton);
 		JButton playButton = new JButton("play");
+		playButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent arg0) {
+				WavFragmentationMainFrame.this.eventBus.publishFromEDT(new MessageDisplayEvent("play"));
+			}
+		});
 		add(playButton, "wrap push");
 
-		JLabel messageLabel = new JLabel("Messages...");
-		add(messageLabel, "left, wmin 280, wmax 280");
+		this.messageLabel = new JLabel("Messages...");
+		add(this.messageLabel, "left, wmin 280, wmax 280");
+	}
+
+	@Override
+	public void receive(final MessageDisplayEvent event) {
+		this.messageLabel.setText(event.getMessageText());
 	}
 }

@@ -1,28 +1,30 @@
 package view;
 
-import hochberger.utilities.application.ApplicationProperties;
+import hochberger.utilities.application.session.BasicSession;
+import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.gui.ApplicationGui;
-import hochberger.utilities.gui.EDTSafeFrame;
 import hochberger.utilities.text.Text;
+import model.MessageDisplayEvent;
 
-public class WavFragmentationGui implements ApplicationGui {
+public class WavFragmentationGui extends SessionBasedObject implements ApplicationGui {
 
-	private final ApplicationProperties properties;
-	EDTSafeFrame frame;
+	WavFragmentationMainFrame mainFrame;
 
-	public WavFragmentationGui(final ApplicationProperties properties) {
-		super();
-		this.properties = properties;
-		this.frame = new WavFragmentationMainFrame(this.properties.title() + Text.space() + this.properties.version());
+	public WavFragmentationGui(final BasicSession session) {
+		super(session);
+		this.mainFrame = new WavFragmentationMainFrame(session.getProperties().title() + Text.space() + session.getProperties().version(), session.getEventBus());
+		session.getEventBus().register(this.mainFrame, MessageDisplayEvent.class);
 	}
 
 	@Override
 	public void activate() {
-		this.frame.show();
+		logger().info("GUI activated");
+		this.mainFrame.show();
 	}
 
 	@Override
 	public void deactivate() {
-		// TODO Auto-generated method stub
+		logger().info("GUI deactivated");
 	}
+
 }
