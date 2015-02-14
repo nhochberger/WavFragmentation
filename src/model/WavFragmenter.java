@@ -11,8 +11,11 @@ import model.events.MessageDisplayEvent;
 
 public class WavFragmenter extends SessionBasedObject implements EventReceiver<BeginFragmentationEvent> {
 
-	public WavFragmenter(final BasicSession session) {
+	private final WavBuffer wavBuffer;
+
+	public WavFragmenter(final BasicSession session, final WavBuffer wavBuffer) {
 		super(session);
+		this.wavBuffer = wavBuffer;
 	}
 
 	@Override
@@ -38,6 +41,6 @@ public class WavFragmenter extends SessionBasedObject implements EventReceiver<B
 	}
 
 	private void beginFragmentation(final File file, final int fps) {
-
+		this.wavBuffer.bufferData(file);
 	}
 }

@@ -3,13 +3,28 @@ package model;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import model.events.MessageDisplayEvent;
 import model.events.PlayWavEvent;
 
+import com.sun.media.sound.WaveFileReader;
+
 public class WavPlayer extends SessionBasedObject implements EventReceiver<PlayWavEvent> {
 
-	public WavPlayer(final BasicSession session) {
+	private final WavBuffer wavBuffer;
+
+	public WavPlayer(final BasicSession session, final WavBuffer wavBuffer) {
 		super(session);
+		this.wavBuffer = wavBuffer;
 	}
 
 	@Override
@@ -25,6 +40,20 @@ public class WavPlayer extends SessionBasedObject implements EventReceiver<PlayW
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		File bufferedData = this.wavBuffer.getBufferedData();
+
+		WaveFileReader wavReader = new WaveFileReader();
+		AudioInputStream stream;
+		try {
+			stream = wavReader.getAudioInputStream(bufferedData);
+			Clip clip = AudioSystem.getClip();
+			clip.open(stream);
+			clip.start();
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+			session().getEventBus().publish(new MessageDisplayEvent("Problem with data. See logs."));
+			session().getLogger().error("Problem while playing av file.", e);
+		}
+
 		session().getEventBus().publish(new MessageDisplayEvent("Replay finished."));
 	}
 }

@@ -58,7 +58,6 @@ public class WavFragmentationMainFrame extends EDTSafeFrame implements EventRece
 		final JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter(".wav-files", "wav"));
 		sourceFileChooserButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
 				fileChooser.showOpenDialog(WavFragmentationMainFrame.this.frame());
