@@ -5,6 +5,8 @@ import hochberger.utilities.application.BasicLoggedApplication;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.eventbus.EventBus;
 import hochberger.utilities.eventbus.SimpleEventBus;
+import model.WavFragmenter;
+import model.events.BeginFragmentationEvent;
 import view.WavFragmentationGui;
 
 public class WavFragmentationApplication extends BasicLoggedApplication {
@@ -12,6 +14,7 @@ public class WavFragmentationApplication extends BasicLoggedApplication {
 	private final WavFragmentationGui gui;
 	private final EventBus eventBus;
 	private final BasicSession session;
+	private final WavFragmenter wavFragmenter;
 
 	public static void main(final String[] args) {
 		setUpLoggingServices(WavFragmentationApplication.class);
@@ -30,6 +33,9 @@ public class WavFragmentationApplication extends BasicLoggedApplication {
 		this.eventBus = new SimpleEventBus();
 		this.session = new BasicSession(properties, this.eventBus, logger());
 		this.gui = new WavFragmentationGui(this.session);
+		this.wavFragmenter = new WavFragmenter(this.session);
+		this.eventBus.register(this.wavFragmenter, BeginFragmentationEvent.class);
+
 		Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
 			@Override
 			public void run() {

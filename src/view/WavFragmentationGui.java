@@ -4,7 +4,7 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.gui.ApplicationGui;
 import hochberger.utilities.text.Text;
-import model.MessageDisplayEvent;
+import model.events.MessageDisplayEvent;
 
 public class WavFragmentationGui extends SessionBasedObject implements ApplicationGui {
 

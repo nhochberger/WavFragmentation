@@ -11,12 +11,17 @@ import hochberger.utilities.images.loader.ImageLoader;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-import model.MessageDisplayEvent;
+import model.events.BeginFragmentationEvent;
+import model.events.MessageDisplayEvent;
+import model.events.PlayWavEvent;
 import net.miginfocom.swing.MigLayout;
 
 public class WavFragmentationMainFrame extends EDTSafeFrame implements EventReceiver<MessageDisplayEvent> {
@@ -37,40 +42,53 @@ public class WavFragmentationMainFrame extends EDTSafeFrame implements EventRece
 		setSize(300, 200);
 		notResizable();
 		setContentPane(new StretchingBackgroundedPanel(ImageLoader.loadImage("graphics/background_white.png")));
-		useLayoutManager(new MigLayout("nogrid, debug", "[center]"));
-		SelfHighlightningValidatingTextField fpsInput = new SelfHighlightningValidatingTextField();
+		useLayoutManager(new MigLayout("nogrid", "[center]"));
+
+		final SelfHighlightningValidatingTextField fpsInput = new SelfHighlightningValidatingTextField();
 		fpsInput.setText("20");
 		fpsInput.setHorizontalAlignment(JTextField.RIGHT);
 		fpsInput.addValidator(new IntegerStringInputValidator());
 		add(fpsInput, "wmin 45");
 		add(new JLabel("files per second"), "wrap");
 
-		JTextField folderLabel = new JTextField("Choose folder");
-		folderLabel.setEditable(false);
-		add(folderLabel, "wmin 200");
-		JButton folderChooserbutton = new JButton("Choose");
-		add(folderChooserbutton, "wrap");
-
-		JButton beginFragmentationButton = new JButton("frag");
-		beginFragmentationButton.addActionListener(new ActionListener() {
+		final JTextField sourceFileLabel = new JTextField("Choose folder");
+		sourceFileLabel.setEditable(false);
+		add(sourceFileLabel, "wmin 200");
+		JButton sourceFileChooserButton = new JButton("Choose");
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(new FileNameExtensionFilter(".wav-files", "wav"));
+		sourceFileChooserButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
-				WavFragmentationMainFrame.this.eventBus.publishFromEDT(new MessageDisplayEvent("begin frag"));
+				fileChooser.showOpenDialog(WavFragmentationMainFrame.this.frame());
+				File selectedFile = fileChooser.getSelectedFile();
+				if (null != selectedFile) {
+					sourceFileLabel.setText(selectedFile.getAbsolutePath());
+				}
 			}
 		});
-		add(beginFragmentationButton);
-		JButton playButton = new JButton("play");
-		playButton.addActionListener(new ActionListener() {
+		add(sourceFileChooserButton, "wrap");
 
+		JButton beginFragmentationButton = new JButton("frag");
+		beginFragmentationButton.addActionListener(new PublishOnEventBusActionListener<BeginFragmentationEvent>(this.eventBus) {
 			@Override
-			public void actionPerformed(final ActionEvent arg0) {
-				WavFragmentationMainFrame.this.eventBus.publishFromEDT(new MessageDisplayEvent("play"));
-			}
+			protected BeginFragmentationEvent event() {
+				return new BeginFragmentationEvent(sourceFileLabel.getText(), fpsInput.getText());
+			};
+		});
+		add(beginFragmentationButton);
+
+		JButton playButton = new JButton("play");
+		playButton.addActionListener(new PublishOnEventBusActionListener<PlayWavEvent>(this.eventBus) {
+			@Override
+			protected PlayWavEvent event() {
+				return new PlayWavEvent();
+			};
 		});
 		add(playButton, "wrap push");
 
-		this.messageLabel = new JLabel("Messages...");
+		this.messageLabel = new JLabel("Choose a wav-file.");
 		add(this.messageLabel, "left, wmin 280, wmax 280");
 	}
 
