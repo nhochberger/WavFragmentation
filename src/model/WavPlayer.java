@@ -16,8 +16,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import model.events.MessageDisplayEvent;
 import model.events.PlayWavEvent;
 
-import com.sun.media.sound.WaveFileReader;
-
 public class WavPlayer extends SessionBasedObject implements EventReceiver<PlayWavEvent> {
 
 	private final WavBuffer wavBuffer;
@@ -42,18 +40,16 @@ public class WavPlayer extends SessionBasedObject implements EventReceiver<PlayW
 		}
 		File bufferedData = this.wavBuffer.getBufferedData();
 
-		WaveFileReader wavReader = new WaveFileReader();
 		AudioInputStream stream;
 		try {
-			stream = wavReader.getAudioInputStream(bufferedData);
 			Clip clip = AudioSystem.getClip();
+			stream = AudioSystem.getAudioInputStream(bufferedData);
 			clip.open(stream);
 			clip.start();
+			session().getEventBus().publish(new MessageDisplayEvent("Replay finished."));
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			session().getEventBus().publish(new MessageDisplayEvent("Problem with data. See logs."));
 			session().getLogger().error("Problem while playing av file.", e);
 		}
-
-		session().getEventBus().publish(new MessageDisplayEvent("Replay finished."));
 	}
 }

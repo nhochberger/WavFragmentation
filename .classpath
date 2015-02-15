@@ -4,5 +4,18 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Utilities"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="lib/beads/library/beads-io.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/beads.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/jarjar-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/jna.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/org-jaudiolibs-audioservers-jack.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/org-jaudiolibs-audioservers-javasound.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/org-jaudiolibs-audioservers.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/org-jaudiolibs-jnajack.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/tools.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/tritonus_aos-0.3.6.jar"/>
+	<classpathentry kind="lib" path="lib/beads/library/tritonus_share.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

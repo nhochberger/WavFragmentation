@@ -42,5 +42,6 @@ public class WavFragmenter extends SessionBasedObject implements EventReceiver<B
 
 	private void beginFragmentation(final File file, final int fps) {
 		this.wavBuffer.bufferData(file);
+		session().getEventBus().publish(new MessageDisplayEvent("Fragmentation finished"));
 	}
 }
