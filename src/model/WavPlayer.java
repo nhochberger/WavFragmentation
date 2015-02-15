@@ -4,6 +4,7 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -43,7 +44,11 @@ public class WavPlayer extends SessionBasedObject implements EventReceiver<PlayW
 		AudioInputStream stream;
 		try {
 			Clip clip = AudioSystem.getClip();
-			stream = AudioSystem.getAudioInputStream(bufferedData);
+
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(this.wavBuffer.getBufferedStreamData().toByteArray());
+
+			stream = AudioSystem.getAudioInputStream(inputStream);
+			System.err.println("stream: " + stream.getFrameLength());
 			clip.open(stream);
 			clip.start();
 			session().getEventBus().publish(new MessageDisplayEvent("Replay finished."));
